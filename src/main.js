@@ -998,7 +998,7 @@ $("popup-overlay").addEventListener("click", event => {
   }
 });
 
-FRIEND SEARCH
+//FRIEND SEARCH
 
 $("friend-search-btn").addEventListener(
   "click",
