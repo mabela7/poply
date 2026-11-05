@@ -5,13 +5,13 @@ import { getDatabase } from "firebase/database";
 // Replace these values with your Firebase project's Web App config.
 // Firebase Console -> Project settings -> General -> Your apps -> Web app.
 const firebaseConfig = {
-  apiKey: "PASTE_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "PASTE_MESSAGING_SENDER_ID",
-  appId: "PASTE_APP_ID"
+  apiKey: "AIzaSyAi27biKcUGvCB4kXsXEdgeq85JLBb7a_Y",
+  authDomain: "library-a60e3.firebaseapp.com",
+  databaseURL: "https://library-a60e3-default-rtdb.firebaseio.com",
+  projectId: "library-a60e3",
+  storageBucket: "library-a60e3.firebasestorage.app",
+  messagingSenderId: "933820691428",
+  appId: "1:933820691428:web:25dcddcfc078ac910acdf1"
 };
 
 export const firebaseConfigured = !Object.values(firebaseConfig).some(v =>
