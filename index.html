@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#090912">
+  <title>Poply</title>
+</head>
+<body>
+  <div id="app">
+    <header class="topbar"><div class="brand"><span class="brand-mark">✳</span> poply</div><span id="session-label" class="muted">Your little surprise studio</span></header>
+    <main>
+      <section id="auth-view" class="panel auth-panel">
+        <div class="eyebrow">MAKE A MOMENT</div>
+        <h1>Little surprises.<br><span class="gradient">Perfect timing.</span></h1>
+        <p class="muted">Create image pop-ups and send them to yourself or friends.</p>
+        <div class="tabs"><button class="tab active" data-auth="signup">Create account</button><button class="tab" data-auth="login">Log in</button></div>
+        <form id="auth-form">
+          <label id="username-wrap">Username<input id="username" autocomplete="username" placeholder="yourname" required></label>
+          <label>Email<input id="email" type="email" autocomplete="email" placeholder="you@example.com" required></label>
+          <label>Password<input id="password" type="password" autocomplete="current-password" minlength="6" placeholder="At least 6 characters" required></label>
+          <button class="primary full" type="submit" id="auth-submit">Create account</button>
+        </form>
+        <p id="auth-error" class="error"></p>
+      </section>
+
+      <section id="app-view" hidden>
+        <nav class="nav">
+          <button class="nav-btn active" data-page="create">Create</button>
+          <button class="nav-btn" data-page="friends">Friends</button>
+          <button class="nav-btn" data-page="scheduled">Scheduled</button>
+          <button class="nav-btn" data-page="account">Account</button>
+        </nav>
+
+        <section class="page" id="page-create">
+          <div class="section-head"><div><div class="eyebrow">POPUP STUDIO</div><h2>Create a pop-up</h2></div><span class="spark">✦</span></div>
+          <div class="editor-grid">
+            <div class="preview-wrap">
+              <div class="preview-label">LIVE PREVIEW</div>
+              <div class="preview-stage">
+                <div class="popup-preview" id="popup-preview">
+                  <img id="preview-image" alt="" hidden>
+                  <div id="preview-message">A little surprise ✨</div>
+                </div>
+              </div>
+              <p class="hint">Transparent PNGs keep their transparent edges.</p>
+            </div>
+            <div class="editor-fields">
+              <label>Message<textarea id="popup-message" maxlength="240" rows="3" placeholder="Write something lovely..."></textarea></label>
+              <label class="upload-button"> <span>＋ Choose image from gallery</span><input id="popup-image" type="file" accept="image/*"></label>
+              <div class="row"><label>Text color<input id="text-color" type="color" value="#ffffff"></label><label>Accent<input id="accent-color" type="color" value="#a78bfa"></label></div>
+              <label>Send to<select id="recipient"><option value="self">Myself</option></select></label>
+              <label>Show at<input id="schedule-at" type="datetime-local"></label>
+              <button id="schedule-btn" class="primary full">Schedule pop-up ↗</button>
+              <p id="editor-status" class="status"></p>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="page-friends" hidden>
+          <div class="eyebrow">YOUR PEOPLE</div><h2>Friends</h2>
+          <div class="inline-form"><input id="friend-search" placeholder="Find by exact username"><button id="friend-search-btn" class="secondary">Search</button></div>
+          <div id="friend-search-result" class="stack"></div>
+          <h3>Friend requests</h3><div id="requests-list" class="stack"></div>
+          <h3>Your friends</h3><div id="friends-list" class="stack"></div>
+        </section>
+
+        <section class="page" id="page-scheduled" hidden>
+          <div class="eyebrow">COMING UP</div><h2>Scheduled pop-ups</h2><div id="scheduled-list" class="stack"></div>
+        </section>
+
+        <section class="page" id="page-account" hidden>
+          <div class="eyebrow">YOUR ACCOUNT</div><h2 id="account-name">Account</h2>
+          <p id="account-email" class="muted"></p>
+          <div class="card"><strong>Notifications</strong><p class="muted">Allow notifications so scheduled surprises can reach you when Poply is closed.</p><button id="enable-notifications" class="secondary">Enable notifications</button><p id="notification-status" class="status"></p></div>
+          <button id="logout-btn" class="danger">Log out</button>
+        </section>
+      </section>
+    </main>
+    <div id="popup-overlay" class="popup-overlay" hidden>
+      <div class="popup-card">
+        <button id="close-popup" class="close-popup" aria-label="Close">×</button>
+        <img id="delivered-image" alt="" hidden>
+        <div id="delivered-message"></div>
+        <div class="eyebrow">A LITTLE POPLY MOMENT</div>
+      </div>
+    </div>
+    <div id="toast" class="toast" role="status"></div>
+  </div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
