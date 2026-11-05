@@ -950,3 +950,214 @@ $("schedule-btn").addEventListener(
 // DISPLAY POPUPS
 
 function showPopupData(data, id = null) {
+  activePopupId = id;
+
+  $("delivered-message").textContent =
+    data.message || "";
+
+  $("delivered-message").style.color =
+    data.textColor || "#fff";
+
+  $("delivered-image").hidden = !data.image;
+
+  if (data.image) {
+    $("delivered-image").src = data.image;
+  } else {
+    $("delivered-image").src = "";
+  }
+
+  document.querySelector(".popup-card")?.style.setProperty(
+    "--accent",
+    data.accent || "#a78bfa"
+  );
+
+  applyDeliveredPositions(data);
+
+  $("popup-overlay").hidden = false;
+}
+
+async function showDeliveredPopup(id) {
+  if (!currentUser) return;
+
+  const snap = await get(
+    ref(db, `inbox/${currentUser.uid}/${id}`)
+  );
+
+  if (snap.exists()) {
+    showPopupData(snap.val(), id);
+  }
+}
+
+$("close-popup").addEventListener("click", () => {
+  $("popup-overlay").hidden = true;
+});
+
+$("popup-overlay").addEventListener("click", event => {
+  if (event.target === $("popup-overlay")) {
+    $("popup-overlay").hidden = true;
+  }
+});
+
+FRIEND SEARCH
+
+$("friend-search-btn").addEventListener(
+  "click",
+  async () => {
+    const name = $("friend-search").value
+      .trim()
+      .toLowerCase();
+
+    if (!name) return;
+
+    try {
+      const snap = await get(
+        ref(db, `usernames/${name}`)
+      );
+
+      if (!snap.exists()) {
+        $("friend-search-result").innerHTML =
+          `<p class="muted">No user found.</p>`;
+        return;
+      }
+
+      const uid = snap.val();
+
+      if (uid === currentUser.uid) {
+        $("friend-search-result").innerHTML =
+          `<p class="muted">That's you!</p>`;
+        return;
+      }
+
+      const userSnap = await get(
+        ref(db, `users/${uid}`)
+      );
+
+      const user = userSnap.val() || {};
+
+      $("friend-search-result").innerHTML = `
+        <div class="list-card">
+          <span>
+            @${escapeHtml(user.username || "user")}
+          </span>
+          <button
+            id="send-request"
+            class="small secondary"
+          >
+            Add friend
+          </button>
+        </div>
+      `;
+
+      $("send-request").addEventListener(
+        "click",
+        async () => {
+          try {
+            await set(
+              ref(
+                db,
+                `friendRequests/${uid}/${currentUser.uid}`
+              ),
+              {
+                username: profile.username,
+                from: currentUser.uid,
+                at: Date.now()
+              }
+            );
+
+            showToast("Friend request sent.");
+
+          } catch (error) {
+            showToast(error.message);
+          }
+        }
+      );
+
+    } catch (error) {
+      showToast(error.message);
+    }
+  }
+);
+
+// ACCEPT FRIEND REQUEST
+
+async function acceptFriend(fromUid) {
+  try {
+    const request = (
+      await get(
+        ref(
+          db,
+          `friendRequests/${currentUser.uid}/${fromUid}`
+        )
+      )
+    ).val();
+
+    if (!request) return;
+
+    await set(
+      ref(db, `friends/${currentUser.uid}/${fromUid}`),
+      {
+        username: request.username
+      }
+    );
+
+    await set(
+      ref(db, `friends/${fromUid}/${currentUser.uid}`),
+      {
+        username: profile.username
+      }
+    );
+
+    await remove(
+      ref(
+        db,
+        `friendRequests/${currentUser.uid}/${fromUid}`
+      )
+    );
+
+    await loadFriends();
+
+    showToast("Friend added.");
+
+  } catch (error) {
+    showToast(error.message);
+  }
+}
+
+// PAGE NAVIGATION
+
+document.querySelectorAll("[data-page]").forEach(button => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll("[data-page]").forEach(item => {
+      item.classList.toggle("active", item === button);
+    });
+
+    document.querySelectorAll(".page").forEach(page => {
+      page.hidden =
+        page.id !== `page-${button.dataset.page}`;
+    });
+
+    if (button.dataset.page === "friends") {
+      loadFriends().catch(error => {
+        console.error("Friend loading error:", error);
+        showToast(error.message);
+      });
+    }
+  });
+});
+
+// LOGOUT
+
+$("logout-btn").addEventListener("click", async () => {
+  try {
+    await signOut(auth);
+  } catch (error) {
+    showToast(error.message);
+  }
+});
+
+// WEB VERSION NOTICE
+
+if (!isNative()) {
+  $("notification-status").textContent =
+    "Push notifications are available in the Android app.";
+}
